@@ -4,9 +4,13 @@ var handlebars = require('handlebars')
 
 //Plantilla handlebars para renderizar en HTML un item de la lista
 //Usamos backticks (funcionalidad de ES6) para delimitar la cadena para que pueda ser multilínea
+//Con el "javascript:" en el href conseguimos que un enlace pueda llamar a código JS
 var templateItem = `
-   <div id="{{id}}">
-      <strong>{{nombre}}</strong> - <em>{{cantidad}}</em>
+   <div>
+      <span id="{{id}}">
+         <strong>{{nombre}}</strong> - <em>{{cantidad}}</em>
+      </span>   
+      <a id="enlace_{{id}}" href="javascript:verDetalles({{id}})">Detalles</a>
    </div>
 `
 
@@ -22,9 +26,16 @@ var templateLista = `
  {{/.}}
 ` 
 
+var templateDetalles = `
+  <span id="detalles_{{id}}">
+    {{detalles}}
+  </span>
+`
+
 //Compilamos las plantillas handlebars. Esto genera funciones a las que llamaremos luego
 var tmpl_lista_compilada = handlebars.compile(templateLista)
 var tmpl_item_compilada = handlebars.compile(templateItem)
+var tmpl_detalles_compilada = handlebars.compile(templateDetalles)
 
 //manejador de eventos para cuando se carga la página
 //le pedimos la lista de items al servidor y la pintamos en el HTML
@@ -55,4 +66,45 @@ document.getElementById('boton_add_item').addEventListener('click', function(){
    })
 })
 
+//llamada cuando pulsamos en un enlace "Detalles"
+function verDetalles(id) {
+	APILista.getItem(id).then(function(item){
+		//creamos un objeto JS con los datos de los detalles a mostrar
+		var datos = {id: item.id, detalles: item.comentario}
+		//lo fusionamos con la plantilla handlebars
+		var datosHTML = tmpl_detalles_compilada(datos)
+		//metemos el HTML resultante en la página
+	    //aprovechamos que hemos hecho que el item con un id determinado 
+	    //esté en el HTML en un div con el mismo id
+		var divItem = document.getElementById(id)
+		divItem.insertAdjacentHTML('beforeend', datosHTML)	
+		//TEDIOSO: ahora hay que cambiar el enlace "ver detalles" por uno "ocultar"
+		//hemos hecho que el HTML del enlace tenga un id con "enlace_" y el id del item
+		var enlaceDetalles = document.getElementById('enlace_'+id)
+		//Cambiamos a dónde apunta el enlace
+		enlaceDetalles.href = 'javascript:ocultarDetalles('+ id +')'
+		//cambiamos el texto del enlace
+		enlaceDetalles.innerHTML = 'Ocultar detalles'
+	})
+}
 
+//IMPORTANTE: para que desde la página se pueda llamar a la función,
+// la guardamos en el ámbito global (window). Si no, no será visible,
+//porque el código del main.js no es visible directamente para el HTML, sino el bundle.js
+window.verDetalles = verDetalles
+//Nótese que es el único caso en que desde el HTML (un enlace) llamamos a algo de JS
+//El resto de casos es al contrario: los manejadores de eventos de antes los hemos
+//definido en JS no en el HTML original
+
+//llamada cuando pulsamos en un enlace "Ocultar Detalles"
+function ocultarDetalles(id) {
+	//forma sencilla de eliminar un fragmento HTML, asignarle la cadena vacía
+	//usamos outerHTML porque incluye la propia etiqueta, innerHTML sería solo el contenido
+	document.getElementById('detalles_'+id).outerHTML = ''
+	//TEDIOSO: volvemos a poner el enlace en modo "mostrar detalles"
+	document.getElementById('enlace_'+id).href = 'javascript:verDetalles('+id+')'
+	document.getElementById('enlace_'+id).innerHTML = 'Detalles'
+
+}
+//hacemos visible ocultarDetalles para el HTML, por lo mismo que con "verDetalles"
+window.ocultarDetalles = ocultarDetalles

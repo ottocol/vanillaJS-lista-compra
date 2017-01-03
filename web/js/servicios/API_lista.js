@@ -18,6 +18,13 @@ module.exports  = {
                    if (respuesta.ok)
                       return respuesta.json()
                })
+    },
+    getItem: function(id) {
+       return fetch(this.API_URL+'/'+id)
+            .then(function(response) {
+                if (response.ok)
+                    return response.json()
+            })
     }
 
 }
