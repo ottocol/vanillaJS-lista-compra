@@ -6,5 +6,18 @@ module.exports  = {
                 if (response.ok)
                     return response.json()
             })
+    },
+    addItem: function (item) {
+        return fetch(this.API_URL, {
+                   method: 'POST',
+                   headers: {
+                       'Content-type':'application/json'
+                   },
+                   body: JSON.stringify(item)
+               }).then(function (respuesta) {
+                   if (respuesta.ok)
+                      return respuesta.json()
+               })
     }
+
 }
