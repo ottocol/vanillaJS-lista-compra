@@ -1,37 +1,33 @@
 # vanillaJS-lista-compra
 
-API REST de la lista de la compra con cliente JS estándar. Como librería adicional solo usamos [handlebars](http://handlebarsjs.com) para simplificar la generación de HTML.
+API REST de la lista de la compra con cliente JS estándar. Hay dos proyectos: el de la parte cliente y el de la parte servidor. El servidor usa las librerías `express` y `body-parser` y además `cors` para permitir peticiones *cross-domain*. En el cliente como librería adicional solo usamos [handlebars](http://handlebarsjs.com) para simplificar la generación de HTML. Para poder utilizar módulos ES6 en el cliente se emplea el *bundler* Parcel.
+
 
 ## Instalar requerimientos
 
-Instalar dependencias como es habitual con
+Simplemente hacer un `npm i` en los dos directorios
 
 ```bash
-npm install
+cd client && npm i && cd ..
+cd server && npm i && cd ..
 ```
 
-Para poder construir el código en el cliente hace falta la herramienta en línea de comandos `watchify`. Si no está instalada, se puede instalar con
+## Probar la aplicación:
+
+Parte servidor: en una terminal, hacer
 
 ```bash
-npm install watchify -g
+cd server
+npm start #ejecutará "node server.js"
 ```
 
-> Si has instalado node usando  NVM (Node Version Manager) no harán falta permisos de *root* para instalar con `-g`, pero si lo has instalado por otros métodos es bastante probable que tengas que ejecutar la orden anterior en modo superusuario.
- 
-## En el proceso de desarrollo
+Si se hace una petición GET a `http://localhost:3000/api/items` deben obtenerse los items de la lista en JSON
 
-Para ejecutar el servidor:
+Parte cliente: en otra terminal, hacer
 
 ```bash
-node server.js
+cd client
+./node_modules/.bin/parcel index.html
 ```
 
-Para poner en marcha el *build* del cliente, en una **nueva terminal** (sin cerrar el proceso del servidor):
-
-```bash
-npm run watch
-```
-
-Esto pondrá en marcha la generación del `bundle.js`. Si modificamos cualquier `.js` se regenerará el *bundle*. No hay que cerrar tampoco esta terminal.
-
-Para probar la aplicación acceder a `http://localhost:3000/web`.
+Abrir un navegador en `http://localhost:1234` y aparecerá el servidor de desarrollo de Parcel con la aplicación. 
