@@ -1,13 +1,18 @@
-module.exports  = {
-    API_URL : 'http://localhost:3000/api/items',
-    obtenerItems: function () {
+
+export class Servicio_API { 
+    constructor(url) {
+        this.API_URL = url
+    }
+    
+    obtenerItems() {
         return fetch(this.API_URL)
             .then(function(response) {
                 if (response.ok)
                     return response.json()
             })
-    },
-    addItem: function (item) {
+    }
+
+    addItem(item) {
         return fetch(this.API_URL, {
                    method: 'POST',
                    headers: {
@@ -18,8 +23,9 @@ module.exports  = {
                    if (respuesta.ok)
                       return respuesta.json()
                })
-    },
-    getItem: function(id) {
+    }
+
+    getItem(id) {
        return fetch(this.API_URL+'/'+id)
             .then(function(response) {
                 if (response.ok)
@@ -28,3 +34,4 @@ module.exports  = {
     }
 
 }
+

@@ -1,5 +1,7 @@
-var APILista = require('./servicios/API_lista.js')
-var handlebars = require('handlebars')
+import {Servicio_API} from './servicios/API_lista.js'
+import { compile } from 'handlebars';
+
+var servicio_API = new Servicio_API('http://localhost:3000/api/items')
 
 
 //Plantilla handlebars para renderizar en HTML un item de la lista
@@ -33,15 +35,18 @@ var templateDetalles = `
 `
 
 //Compilamos las plantillas handlebars. Esto genera funciones a las que llamaremos luego
-var tmpl_lista_compilada = handlebars.compile(templateLista)
-var tmpl_item_compilada = handlebars.compile(templateItem)
-var tmpl_detalles_compilada = handlebars.compile(templateDetalles)
+var tmpl_lista_compilada = compile(templateLista)
+var tmpl_item_compilada = compile(templateItem)
+var tmpl_detalles_compilada = compile(templateDetalles)
+
+
+
 
 //manejador de eventos para cuando se carga la página
 //le pedimos la lista de items al servidor y la pintamos en el HTML
 document.addEventListener('DOMContentLoaded', function(){
 	console.log("Página cargada!: " +  new Date().toLocaleString())
-	APILista.obtenerItems().then(function(datos) {
+	servicio_API.obtenerItems().then(function(datos) {
 		//mezclamos los datos con el HTML de la plantilla para obtener el HTML resultado
 		var listaHTML = tmpl_lista_compilada(datos)
 		//insertamos el HTML en la página
@@ -57,7 +62,7 @@ document.getElementById('boton_add_item').addEventListener('click', function(){
    nuevo.cantidad = document.getElementById('nuevo_cantidad').value
    nuevo.comentario = document.getElementById('nuevo_comentario').value
    //Enviamos el objeto al servidor, usando el API
-   APILista.addItem(nuevo).then(function(creado){
+   servicio_API.addItem(nuevo).then(function(creado){
    	 //Añadimos el HTML del nuevo item a la lista
    	 //1. Mezclamos datos con plantilla handlebars
    	 var nuevoHTML = tmpl_item_compilada(creado)
@@ -68,7 +73,7 @@ document.getElementById('boton_add_item').addEventListener('click', function(){
 
 //llamada cuando pulsamos en un enlace "Detalles"
 function verDetalles(id) {
-	APILista.getItem(id).then(function(item){
+	servicio_API.getItem(id).then(function(item){
 		//creamos un objeto JS con los datos de los detalles a mostrar
 		var datos = {id: item.id, detalles: item.comentario}
 		//lo fusionamos con la plantilla handlebars
@@ -108,3 +113,5 @@ function ocultarDetalles(id) {
 }
 //hacemos visible ocultarDetalles para el HTML, por lo mismo que con "verDetalles"
 window.ocultarDetalles = ocultarDetalles
+
+
