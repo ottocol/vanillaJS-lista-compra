@@ -57,10 +57,10 @@ document.getElementById('boton_add_item').addEventListener('click', function(){
    nuevo.cantidad = document.getElementById('nuevo_cantidad').value
    nuevo.comentario = document.getElementById('nuevo_comentario').value
    //Enviamos el objeto al servidor, usando el API
-   APILista.addItem(nuevo).then(function(datos){
+   APILista.addItem(nuevo).then(function(creado){
    	 //Añadimos el HTML del nuevo item a la lista
    	 //1. Mezclamos datos con plantilla handlebars
-   	 var nuevoHTML = tmpl_item_compilada(nuevo)
+   	 var nuevoHTML = tmpl_item_compilada(creado)
    	 //2. Añadimos el HTML resultante al final de la lista
      document.getElementById('miComponente').insertAdjacentHTML('beforeend', nuevoHTML)
    })

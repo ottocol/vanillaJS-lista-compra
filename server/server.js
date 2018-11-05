@@ -1,7 +1,8 @@
 var express = require('express')
 var app = express()
 
-app.use('/web', express.static('web'))
+var cors = require('cors')
+app.use(cors())
 
 //Para la utilidad body-parser
 var bp = require('body-parser')
