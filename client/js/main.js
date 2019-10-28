@@ -8,11 +8,9 @@ var servicio_API = new Servicio_API('http://localhost:3000/api/items')
 //Usamos backticks (funcionalidad de ES6) para delimitar la cadena para que pueda ser multilínea
 //Con el "javascript:" en el href conseguimos que un enlace pueda llamar a código JS
 var templateItem = `
-   <div>
-      <span id="{{id}}">
-         <strong>{{nombre}}</strong> - <em>{{cantidad}}</em>
-      </span>   
-      <a id="enlace_{{id}}" href="javascript:verDetalles({{id}})">Detalles</a>
+   <div id="{{id}}">
+	  <strong>{{nombre}}</strong> - <em>{{cantidad}}</em>
+	  <button id="delete_{{id}}">Eliminar</button>
    </div>
 `
 
@@ -28,16 +26,9 @@ var templateLista = `
  {{/.}}
 ` 
 
-var templateDetalles = `
-  <span id="detalles_{{id}}">
-    {{detalles}}
-  </span>
-`
-
 //Compilamos las plantillas handlebars. Esto genera funciones a las que llamaremos luego
 var tmpl_lista_compilada = compile(templateLista)
 var tmpl_item_compilada = compile(templateItem)
-var tmpl_detalles_compilada = compile(templateDetalles)
 
 
 
@@ -50,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function(){
 		//mezclamos los datos con el HTML de la plantilla para obtener el HTML resultado
 		var listaHTML = tmpl_lista_compilada(datos)
 		//insertamos el HTML en la página
-		document.getElementById("miComponente").innerHTML = listaHTML
+		document.getElementById("miApp").innerHTML = listaHTML
 	})
 })
 
@@ -67,9 +58,24 @@ document.getElementById('boton_add_item').addEventListener('click', function(){
    	 //1. Mezclamos datos con plantilla handlebars
    	 var nuevoHTML = tmpl_item_compilada(creado)
    	 //2. Añadimos el HTML resultante al final de la lista
-     document.getElementById('miComponente').insertAdjacentHTML('beforeend', nuevoHTML)
+     document.getElementById('miApp').insertAdjacentHTML('beforeend', nuevoHTML)
    })
 })
 
-
+document.getElementById('miApp').addEventListener('click', function(e){
+	//solo nos interesan los clicks en los botones de eliminar
+	//y sabemos que su id empieza por delete_
+	if (!e.target.id.startsWith('delete_'))
+	   return
+	//Obtenemos el id del item a eliminar (lo que va detrás del "delete_")  
+	var id = e.target.id.substring(7)  
+	servicio_API.deleteItem(id)
+	  .then(function(ok){
+			if (ok) {
+				//borramos del HTML el div con el item
+				var div_item = e.target.parentNode
+				div_item.parentNode.removeChild(div_item)	
+			}
+	  }) 
+})
 

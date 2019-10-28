@@ -33,5 +33,17 @@ export class Servicio_API {
             })
     }
 
+    deleteItem(id) {
+        return fetch(this.API_URL+'/'+id, {
+                  method: 'DELETE'
+               })
+             .then(function(respuesta) {
+                 if (respuesta.status==204)
+                     return true
+                 else
+                     return false
+             })
+     }
+
 }
 

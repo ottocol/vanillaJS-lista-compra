@@ -80,7 +80,7 @@ app.delete('/api/items/:id', function(pet, resp){
         }
         else{
             lista.delete(id);
-            resp.end();
+            resp.status(204).end();
         }
     }
 })
