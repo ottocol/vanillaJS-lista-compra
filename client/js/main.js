@@ -71,47 +71,5 @@ document.getElementById('boton_add_item').addEventListener('click', function(){
    })
 })
 
-//llamada cuando pulsamos en un enlace "Detalles"
-function verDetalles(id) {
-	servicio_API.getItem(id).then(function(item){
-		//creamos un objeto JS con los datos de los detalles a mostrar
-		var datos = {id: item.id, detalles: item.comentario}
-		//lo fusionamos con la plantilla handlebars
-		var datosHTML = tmpl_detalles_compilada(datos)
-		//metemos el HTML resultante en la página
-	    //aprovechamos que hemos hecho que el item con un id determinado 
-	    //esté en el HTML en un div con el mismo id
-		var divItem = document.getElementById(id)
-		divItem.insertAdjacentHTML('beforeend', datosHTML)	
-		//TEDIOSO: ahora hay que cambiar el enlace "ver detalles" por uno "ocultar"
-		//hemos hecho que el HTML del enlace tenga un id con "enlace_" y el id del item
-		var enlaceDetalles = document.getElementById('enlace_'+id)
-		//Cambiamos a dónde apunta el enlace
-		enlaceDetalles.href = 'javascript:ocultarDetalles('+ id +')'
-		//cambiamos el texto del enlace
-		enlaceDetalles.innerHTML = 'Ocultar detalles'
-	})
-}
-
-//IMPORTANTE: para que desde la página se pueda llamar a la función,
-// la guardamos en el ámbito global (window). Si no, no será visible,
-//porque el código del main.js no es visible directamente para el HTML, sino el bundle.js
-window.verDetalles = verDetalles
-//Nótese que es el único caso en que desde el HTML (un enlace) llamamos a algo de JS
-//El resto de casos es al contrario: los manejadores de eventos de antes los hemos
-//definido en JS no en el HTML original
-
-//llamada cuando pulsamos en un enlace "Ocultar Detalles"
-function ocultarDetalles(id) {
-	//forma sencilla de eliminar un fragmento HTML, asignarle la cadena vacía
-	//usamos outerHTML porque incluye la propia etiqueta, innerHTML sería solo el contenido
-	document.getElementById('detalles_'+id).outerHTML = ''
-	//TEDIOSO: volvemos a poner el enlace en modo "mostrar detalles"
-	document.getElementById('enlace_'+id).href = 'javascript:verDetalles('+id+')'
-	document.getElementById('enlace_'+id).innerHTML = 'Detalles'
-
-}
-//hacemos visible ocultarDetalles para el HTML, por lo mismo que con "verDetalles"
-window.ocultarDetalles = ocultarDetalles
 
 
